@@ -1,64 +1,44 @@
+function relogio() {
 
-const ctx = document.getElementById('sensorChart').getContext('2d');
+    const today = new Date()
 
-const chart = new Chart(ctx, {
-    type: 'line', 
-    data: {
-        labels: [], 
-        datasets: [
-            { label: 'Temperatura (°C)', data: [], borderColor: 'red', fill: false }, 
-            { label: 'Umidade (%)', data: [], borderColor: 'blue', fill: false }, 
-            { label: 'Pressão (hPa)', data: [], borderColor: 'green', fill: false }, 
-          
-        ]
-    },
-    options: {
-        responsive: true, 
-        scales: {
-            x: { title: { display: true, text: 'Tempo' } } 
+    hora = today.getHours();
+    minuto = today.getMinutes();
+    segundo = today.getSeconds();
+
+    document.getElementById('hora').innerHTML = hora + " : "
+    document.getElementById('minuto').innerHTML = minuto
+    document.getElementById('segundo').innerHTML = " : " + segundo
+
+
+    setTimeout(relogio, 1000);
+
+}
+
+function cronometer() {
+
+    let hora = 23;
+    let minuto = 59
+    let segundo = 59;
+
+    const timer = setInterval(() => {
+        console.log(segundo);
+        document.getElementById('cronometer').innerText  = hora + " : " + minuto + " : " + segundo
+
+        segundo--;
+
+        if (segundo == 0) {
+            segundo = 59
+            minuto = minuto -1
         }
+
+        if (minuto == 0) {
+        hora = hora - 1
+        minuto = 59
     }
-});
 
-async function atualizarSensores() {
-    try {
-        
-        const response = await fetch('/sensores');
-
-        
-        const data = await response.json();
-
-   
-        document.getElementById('temp').innerText = data.temperatura; 
-        document.getElementById('hum').innerText = data.umidade; 
-        document.getElementById('pres').innerText = data.pressao; 
-        
-
-
-
-        
-        const now = new Date().toLocaleTimeString();
-
-
-chart.data.labels.push(now); 
-chart.data.datasets[0].data.push(data.temperatura); 
-chart.data.datasets[1].data.push(data.umidade); 
-chart.data.datasets[2].data.push(data.pressao); 
-
-
-
-if (chart.data.labels.length > 10) {
-    chart.data.labels.shift(); 
-    chart.data.datasets.forEach(dataset => dataset.data.shift()); 
+    }, 1000); 
 }
 
 
-chart.update();
 
-} catch (error) {
-   
-    console.error("Erro ao buscar dados:", error);
-}
-}
-
-setInterval(atualizarSensores, 2000);
